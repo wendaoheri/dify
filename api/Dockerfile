@@ -44,9 +44,7 @@ WORKDIR /app/api
 
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl wget vim nodejs ffmpeg libgmp-dev libmpfr-dev libmpc-dev gnupg software-properties-common lsb-release \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends curl wget vim nodejs ffmpeg libgmp-dev libmpfr-dev libmpc-dev gnupg software-properties-common lsb-release
 
 # 添加HashiCorp的GPG密钥
 RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
