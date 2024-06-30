@@ -51,8 +51,8 @@ RUN apt-get update \
 # 添加HashiCorp的GPG密钥
 RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 
-RUN install -o root -g root -m 644 hashicorp.gpg /etc/apt/trusted.gpg.d/
-RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+# RUN install -o root -g root -m 644 hashicorp.gpg /etc/apt/trusted.gpg.d/
+RUN apt-add-repository -y "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 
 # 安装Terraform
 RUN apt-get update && apt-get install -y terraform
