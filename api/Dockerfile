@@ -46,6 +46,13 @@ RUN apt-get update \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get install -y --no-install-recommends software-properties-common gnupg2
+RUN curl https://apt.releases.hashicorp.com/gpg | gpg --dearmor > hashicorp.gpg
+RUN install -o root -g root -m 644 hashicorp.gpg /etc/apt/trusted.gpg.d/
+RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+RUN apt install terraform
+
+
 # Copy Python environment and packages
 ENV VIRTUAL_ENV=/app/api/.venv
 COPY --from=packages ${VIRTUAL_ENV} ${VIRTUAL_ENV}
