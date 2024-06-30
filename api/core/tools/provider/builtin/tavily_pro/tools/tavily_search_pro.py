@@ -1,9 +1,8 @@
 from typing import Any
-
-import requests
-
 from core.tools.entities.tool_entities import ToolInvokeMessage
 from core.tools.tool.builtin_tool import BuiltinTool
+import requests
+import uuid
 
 TAVILY_API_URL = "https://api.tavily.com"
 
@@ -36,16 +35,22 @@ class TavilySearchPro:
 
         """
         params["api_key"] = self.api_key
-        if 'exclude_domains' in params and isinstance(params['exclude_domains'], str) and params[
-            'exclude_domains'] != 'None':
-            params['exclude_domains'] = params['exclude_domains'].split()
+        if (
+                "exclude_domains" in params
+                and isinstance(params["exclude_domains"], str)
+                and params["exclude_domains"] != "None"
+        ):
+            params["exclude_domains"] = params["exclude_domains"].split()
         else:
-            params['exclude_domains'] = []
-        if 'include_domains' in params and isinstance(params['include_domains'], str) and params[
-            'include_domains'] != 'None':
-            params['include_domains'] = params['include_domains'].split()
+            params["exclude_domains"] = []
+        if (
+                "include_domains" in params
+                and isinstance(params["include_domains"], str)
+                and params["include_domains"] != "None"
+        ):
+            params["include_domains"] = params["include_domains"].split()
         else:
-            params['include_domains'] = []
+            params["include_domains"] = []
 
         response = requests.post(f"{TAVILY_API_URL}/search", json=params)
         response.raise_for_status()
@@ -81,7 +86,7 @@ class TavilySearchPro:
             clean_results.append(
                 {
                     "url": result["url"],
-                    "summary": result['content'],
+                    "summary": result["content"],
                     "content": result["raw_content"],
                 }
             )
@@ -121,10 +126,11 @@ class TavilySearchProTool(BuiltinTool):
             return self.create_text_message(f"No results found for '{query}' in Tavily")
         else:
             raw_content = "\n".join([f"{doc['url']}\n{doc['content']}" for doc in docs])
-            # user_id = str(uuid.uuid4())
-            # summaries = self.summary(user_id=user_id, content=results)
-            result = {
-                'raw_content': raw_content,
-                'docs': docs
-            }
-            return self.create_json_message(object=result)
+            user_id = str(uuid.uuid4())
+            summaries = self.summary(user_id=user_id, content=results)
+            # result = {
+            #     'raw_content': raw_content,
+            #     'docs': docs
+            # }
+            # return self.create_json_message(object=result)
+            return self.create_text_message(summaries)
