@@ -8,7 +8,7 @@ from core.tools.tool.builtin_tool import BuiltinTool
 TAVILY_API_URL = "https://api.tavily.com"
 
 
-class TavilySearch:
+class TavilySearchPro:
     """
     A class for performing search operations using the Tavily Search API.
 
@@ -36,15 +36,17 @@ class TavilySearch:
 
         """
         params["api_key"] = self.api_key
-        if 'exclude_domains' in params and isinstance(params['exclude_domains'], str) and params['exclude_domains'] != 'None':
+        if 'exclude_domains' in params and isinstance(params['exclude_domains'], str) and params[
+            'exclude_domains'] != 'None':
             params['exclude_domains'] = params['exclude_domains'].split()
         else:
             params['exclude_domains'] = []
-        if 'include_domains' in params and isinstance(params['include_domains'], str) and params['include_domains'] != 'None':
+        if 'include_domains' in params and isinstance(params['include_domains'], str) and params[
+            'include_domains'] != 'None':
             params['include_domains'] = params['include_domains'].split()
         else:
             params['include_domains'] = []
-        
+
         response = requests.post(f"{TAVILY_API_URL}/search", json=params)
         response.raise_for_status()
         return response.json()
@@ -79,20 +81,22 @@ class TavilySearch:
             clean_results.append(
                 {
                     "url": result["url"],
+                    "summary": result['content'],
                     "content": result["raw_content"],
                 }
             )
         # return clean results as a string
-        return "\n".join([f"{res['url']}\n{res['content']}" for res in clean_results])
+        # raw_content = "\n".join([f"{res['url']}\n{res['content']}" for res in clean_results])
+        return clean_results
 
 
-class TavilySearchTool(BuiltinTool):
+class TavilySearchProTool(BuiltinTool):
     """
     A tool for searching Tavily using a given query.
     """
 
     def _invoke(
-        self, user_id: str, tool_parameters: dict[str, Any]
+            self, user_id: str, tool_parameters: dict[str, Any]
     ) -> ToolInvokeMessage | list[ToolInvokeMessage]:
         """
         Invokes the Tavily search tool with the given user ID and tool parameters.
@@ -109,10 +113,18 @@ class TavilySearchTool(BuiltinTool):
         api_key = self.runtime.credentials["tavily_api_key"]
         if not query:
             return self.create_text_message("Please input query")
-        tavily_search = TavilySearch(api_key)
-        results = tavily_search.results(tool_parameters)
-        print(results)
-        if not results:
+        tavily_search = TavilySearchPro(api_key)
+        docs = tavily_search.results(tool_parameters)
+
+        print(docs)
+        if not docs:
             return self.create_text_message(f"No results found for '{query}' in Tavily")
         else:
-            return self.create_text_message(text=results)
+            raw_content = "\n".join([f"{doc['url']}\n{doc['content']}" for doc in docs])
+            # user_id = str(uuid.uuid4())
+            # summaries = self.summary(user_id=user_id, content=results)
+            result = {
+                'raw_content': raw_content,
+                'docs': docs
+            }
+            return self.create_json_message(object=result)
