@@ -55,7 +55,9 @@ RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 RUN apt-add-repository -y "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 
 # 安装Terraform
-RUN apt-get update && apt-get install -y terraform
+RUN apt-get install -y terraform \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
 
 # Copy Python environment and packages
