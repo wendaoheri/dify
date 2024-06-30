@@ -5,7 +5,7 @@ from core.tools.provider.builtin.tavily.tools.tavily_search import TavilySearchT
 from core.tools.provider.builtin_tool_provider import BuiltinToolProviderController
 
 
-class TavilyProvider(BuiltinToolProviderController):
+class TavilyProProvider(BuiltinToolProviderController):
     def _validate_credentials(self, credentials: dict[str, Any]) -> None:
         try:
             TavilySearchTool().fork_tool_runtime(

@@ -2,13 +2,13 @@ identity:
   author: Yash Parmar
   name: tavily_pro
   label:
-    en_US: Tavily
-    zh_Hans: Tavily
-    pt_BR: Tavily
+    en_US: TavilyPro
+    zh_Hans: TavilyPro
+    pt_BR: TavilyPro
   description:
-    en_US: Tavily
-    zh_Hans: Tavily
-    pt_BR: Tavily
+    en_US: TavilyPro
+    zh_Hans: TavilyPro
+    pt_BR: TavilyPro
   icon: icon.png
   tags:
     - search
