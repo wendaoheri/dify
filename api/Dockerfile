@@ -41,16 +41,22 @@ ENV TZ=UTC
 
 WORKDIR /app/api
 
+RUN install -o root -g root -m 644 hashicorp.gpg /etc/apt/trusted.gpg.d/
+RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl wget vim nodejs ffmpeg libgmp-dev libmpfr-dev libmpc-dev \
+    && apt-get install -y --no-install-recommends curl wget vim nodejs ffmpeg libgmp-dev libmpfr-dev libmpc-dev gnupg software-properties-common lsb-release \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y --no-install-recommends software-properties-common gnupg2
-RUN curl https://apt.releases.hashicorp.com/gpg | gpg --dearmor > hashicorp.gpg
-RUN install -o root -g root -m 644 hashicorp.gpg /etc/apt/trusted.gpg.d/
-RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-RUN apt-get install -y --no-install-recommends terraform
+# 添加HashiCorp的GPG密钥
+RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+
+# 添加HashiCorp仓库到APT源
+RUN apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
+# 安装Terraform
+RUN apt-get update && apt-get install -y terraform
 
 
 # Copy Python environment and packages
