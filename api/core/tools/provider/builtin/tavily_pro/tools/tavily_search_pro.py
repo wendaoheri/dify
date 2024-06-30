@@ -127,10 +127,10 @@ class TavilySearchProTool(BuiltinTool):
         else:
             raw_content = "\n".join([f"{doc['url']}\n{doc['content']}" for doc in docs])
             user_id = str(uuid.uuid4())
-            summaries = self.summary(user_id=user_id, content=results)
+            summaries = self.summary(user_id=user_id, content=raw_content)
             # result = {
             #     'raw_content': raw_content,
             #     'docs': docs
             # }
             # return self.create_json_message(object=result)
-            return self.create_text_message(summaries)
+            return self.create_text_message(text=summaries)
