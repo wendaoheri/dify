@@ -44,18 +44,13 @@ WORKDIR /app/api
 
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl wget vim nodejs ffmpeg libgmp-dev libmpfr-dev libmpc-dev gnupg software-properties-common lsb-release
-
-# 添加HashiCorp的GPG密钥
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-
-# RUN install -o root -g root -m 644 hashicorp.gpg /etc/apt/trusted.gpg.d/
-RUN apt-add-repository -y "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-
-# 安装Terraform
-RUN apt-get install -y terraform \
+    && apt-get install -y --no-install-recommends curl wget vim nodejs ffmpeg libgmp-dev libmpfr-dev libmpc-dev unzip \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://releases.hashicorp.com/terraform/1.9.0/terraform_1.9.0_linux_amd64.zip -o terraform.zip \
+    && unzip terraform.zip \
+    && mv terraform /usr/local/bin/
 
 
 # Copy Python environment and packages
